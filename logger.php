@@ -4,7 +4,7 @@ define('LOG_FILE',	'log');
 define('MODE',		'a');
 define('DATE',		'H:i:s/m.d.y - ');
 
-class logger {
+class Logger {
 
 	private $fp;
 
