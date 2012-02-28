@@ -1,5 +1,8 @@
 <?php 
+require('logger.php');
 
-mail('neil@wolfiezero.com', 'SERVER_CALL', $_SERVER);
+$log = new logger();
+
+$log->logVar($_SERVER, 'SERVER_CALL');
 
 `git pull`;
