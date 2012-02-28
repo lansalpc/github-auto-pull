@@ -1,5 +1,11 @@
 <?php 
 
-mail('neil@wolfiezero.com', 'SERVER_CALL', $_SERVER['REMOTE_ADDR']);
+$projectName	= 'uploadProject';
+$email			= 'neil@wolfiezero.com';
 
-`git pull`;
+if ($_SEVER['REMOTE_ADDR'] === '207.97.227.253') {
+	mail($email, '['.$projectName.'] `GIT PULL` successful', 'Request came form '.$_SERVER['REMOTE_ADDR']);
+	`git pull`;
+} else {
+	mail($email, '['.$projectName.'] `GIT PULL` failed', 'Request came form '.$_SERVER['REMOTE_ADDR']);
+}
