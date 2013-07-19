@@ -1,18 +1,29 @@
 <?php 
 
-$projectName	= ''; // Your project name
-$email			= ''; // Email address you want pull notifcations to go to
-
 // Copy and paste the results from `passgen` here
-$pass = '';
 $salt = '';
+$pass = '';
 // End copy and paste
 
 
-// Don't need to edit these lines
-$remoteIP	= $_SERVER['REMOTE_ADDR'];
-$msg		= 'Request came form '.$remoteIP.' - http://whois.arin.net/rest/ip/'.$remoteIP;
+// Defaults
+$projectName = ''; // Your project name
+$email		 = ''; // Email address you want pull notifcations to go to
+$from        = 'no-reply'; // Who the email, when called, is sent "from"
 
+
+// Get varibles from query string
+if ( isset($_GET['project']) && $_GET['project'] ) $projectName = $_GET['project'];
+
+if ( isset($_GET['email']) && $_GET['email'] )     $email = $_GET['email'];
+
+if ( isset($_GET['from']) && $_GET['from'] )       $from = $_GET['from'];
+
+
+// Don't need to edit these lines
+$remoteIP = $_SERVER['REMOTE_ADDR'];
+$msg	  = 'Request came form '.$remoteIP.' - http://whois.arin.net/rest/ip/'.$remoteIP;
+$headers  = 'From: '.$from.' <'.$from.'@github.com>';
 
 
 if (isset($_GET['update'])) {
@@ -22,17 +33,22 @@ if (isset($_GET['update'])) {
 	$check = md5(crypt($_GET['update'], $salt));
 
 	if ($pass === $check) {
-		
-		// what does the pull, don't change the backticks (`) as it tells PHP to execute a shell command
-		`git pull`;
-		
-		// Email to say it's successful
-		mail($email, '['.$projectName.'] `GIT PULL` successful', $msg);
 
-	} else {
+		// what does the pull
+		$output = shell_exec('git pull');
+
+		if ( $output && $email ) {
+			// Email to say it's successful
+			mail($email, '['.$projectName.'] `git pull`', $output."\r\n".$msg, $headers);
+		} elseif ( $email ) {
+			// We didn't get output so an error occured
+			mail($email, '['.$projectName.'] `git pull` error', 'No output'."\r\n".$msg, $headers);
+		}
+
+	} elseif ( $email ) {
 
 		// Email to say the pull failed (due to wrong pass)
-		mail($email, '['.$projectName.'] `GIT PULL` password fail', $msg); 
+		mail($email, '['.$projectName.'] `git pull` password fail', $output."\r\n".$msg, $headers); 
 
 	}
 
@@ -60,6 +76,6 @@ if (isset($_GET['update'])) {
 
 	echo $html;
 
-} else {
-	mail($email, '['.$projectName.'] `GIT PULL` failed', $msg);
+} elseif ( $email ) {
+	mail($email, '['.$projectName.'] `git pull` failed', $msg, $headers);
 }
