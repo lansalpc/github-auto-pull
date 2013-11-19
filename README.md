@@ -7,6 +7,7 @@ Nettuts+,  [The Perfect Workflow, with Git, GitHub, and SSH](http://net.tutsplus
 Github Auto Pull aims to provide as secure a way as possible of having your 
 project auto pull when you push a commit to Github.
 
+GitHub hooks are slow to execute. If you need an instantaneous response, post to the url in a script that is executed in a git hook.
 
 Installing
 -------------------------------------------------------------------------------
@@ -18,11 +19,34 @@ Installing
 3. Copy the contents of the first text box and paste that into the file (should be lines 4 and 5) 
 
 4. Copy the contents of the second text box and go to `https://github.com/USERNAME/PROJECT/admin/hooks` (changing USERNAME and PROJECT accordinly) and click on "Post-Receive URLs" and paste the contents into one of the empty boxes. Click "Update Settings".
+   
+   _or_
+  
+   Setup a git hook in your local git repo using this url.
 
 5. Change the permissions of the file to `754`. This will allow your server to run the commands.
 
-6. That should be all ready to go and even if you publish the file with the keys, they might struggle sussing out the password thanks to the MD5 encoding and the somewhat secure crypt() file.
+6. Modify the sudoers file (`visudo`) to give the apache user the right to act as the git owner to pull changes:
 
+    ```
+    Defaults:apache !requiretty
+    apache ALL = (your-git-user) NOPASSWD: /usr/bin/git pull
+    ```
+
+7. All done.
+
+Security
+-------------------------------------------------------------------------------
+
+Security as provided here is basic. There is MD5 encoding and the somewhat secure crypt() file. It just comes down to breaking a password. So make sure your password is sufficiently unguessable.
+
+Further work is required to make this more robust in the cloud:
+
+* To scale it, create SNS topic in AWS using the url provided in step (4) below and have all web servers subscribe to it. 
+
+* Either change GitHub post-receive URLs to use SNS notification or modify git hook to send that notification to SNS. Sending notification requires access to AWS account credentials, providing another level of security.
+
+* Lock down apache to only allow execution of that URL from SNS.
 
 Options
 -------------------------------------------------------------------------------
