@@ -8,7 +8,7 @@ $pass = '';
 
 // Defaults
 $projectName = ''; // Your project name
-$email	     = ''; // Email address you want pull notifcations to go to
+$email       = ''; // Email address you want pull notifcations to go to
 $from        = 'no-reply'; // Who the email, when called, is sent "from"
 
 
