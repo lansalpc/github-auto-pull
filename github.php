@@ -1,18 +1,19 @@
 <?php 
 
 // Copy and paste the results from `passgen` here
-$salt = '';
-$pass = '';
+// *** Edit this ***
+$salt = '1649958722';
+$pass = '9b5751b19ead7dd956134ecd8a2e6070';
 // End copy and paste
 
 
 // Defaults
-$projectName = ''; // Your project name
-$email       = ''; // Email address you want pull notifcations to go to
-$from        = 'no-reply'; // Who the email, when called, is sent "from"
+// *** Edit this ***
+-$projectName = ''; // Your project name
+-$email       = ''; // Email address you want pull notifcations to go to
+-$from        = 'no-reply'; // Who the email, when called, is sent "from"
 
-
-// Get varibles from query string
+// Get variables from query string
 if ( isset($_GET['project']) && $_GET['project'] ) $projectName = $_GET['project'];
 
 if ( isset($_GET['email']) && $_GET['email'] )     $email = $_GET['email'];
@@ -25,7 +26,6 @@ $remoteIP = $_SERVER['REMOTE_ADDR'];
 $msg	  = 'Request came from '.$remoteIP.' - http://whois.arin.net/rest/ip/'.$remoteIP;
 $headers  = 'From: '.$from.' <'.$from.'@github.com>';
 
-
 if (isset($_GET['update'])) {
 
 	// We want to update the folder with the latest from the repo
@@ -34,22 +34,29 @@ if (isset($_GET['update'])) {
 
 	if ($pass === $check) {
 
+		// Change to project installation directory
+		// *** Edit this ***
+		chdir( '/opt/lansa.rg132' );
+
 		// This does the pull
-		$output = shell_exec('git pull');
+		// *** Edit this ***
+		$output = shell_exec('sudo -u your_user git pull');
 
 		if ( $output && $email ) {
+			syslog( LOG_INFO, $output );
+
 			// Email to say it's successful
 			mail($email, '['.$projectName.'] `git pull`', $output."\r\n".$msg, $headers);
 		} elseif ( $email ) {
 			// We didn't get output so an error occured
+			error_log( '[' . $projectName . '] `git pull` error' . $msg ) ;
 			mail($email, '['.$projectName.'] `git pull` error', 'No output'."\r\n".$msg, $headers);
 		}
 
 	} elseif ( $email ) {
-
 		// Email to say the pull failed (due to wrong password)
-		mail($email, '['.$projectName.'] `git pull` password fail', $output."\r\n".$msg, $headers); 
-
+		error_log(  '[' . $projectName . '] `git pull` password fail. ' . $msg );
+		mail($email, '['.$projectName.'] `git pull` password fail', $msg, $headers);
 	}
 
 } elseif (isset($_GET['passgen'])) {
