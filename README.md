@@ -4,7 +4,7 @@ Github Auto Pull
 This script is based on the post by [Jeffery Way](http://jeffrey-way.com/) on 
 Nettuts+,  [The Perfect Workflow, with Git, GitHub, and SSH](http://net.tutsplus.com/tutorials/other/the-perfect-workflow-with-git-github-and-ssh/).
 
-Github Auto Pull aims to provide a secure way as possible of having your 
+Github Auto Pull aims to provide as secure a way as possible of having your 
 project auto pull when you push a commit to Github.
 
 
