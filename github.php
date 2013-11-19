@@ -8,7 +8,7 @@ $pass = '';
 
 // Defaults
 $projectName = ''; // Your project name
-$email		 = ''; // Email address you want pull notifcations to go to
+$email	     = ''; // Email address you want pull notifcations to go to
 $from        = 'no-reply'; // Who the email, when called, is sent "from"
 
 
@@ -22,7 +22,7 @@ if ( isset($_GET['from']) && $_GET['from'] )       $from = $_GET['from'];
 
 // Don't need to edit these lines
 $remoteIP = $_SERVER['REMOTE_ADDR'];
-$msg	  = 'Request came form '.$remoteIP.' - http://whois.arin.net/rest/ip/'.$remoteIP;
+$msg	  = 'Request came from '.$remoteIP.' - http://whois.arin.net/rest/ip/'.$remoteIP;
 $headers  = 'From: '.$from.' <'.$from.'@github.com>';
 
 
@@ -34,7 +34,7 @@ if (isset($_GET['update'])) {
 
 	if ($pass === $check) {
 
-		// what does the pull
+		// This does the pull
 		$output = shell_exec('git pull');
 
 		if ( $output && $email ) {
@@ -47,7 +47,7 @@ if (isset($_GET['update'])) {
 
 	} elseif ( $email ) {
 
-		// Email to say the pull failed (due to wrong pass)
+		// Email to say the pull failed (due to wrong password)
 		mail($email, '['.$projectName.'] `git pull` password fail', $output."\r\n".$msg, $headers); 
 
 	}
